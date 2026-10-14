@@ -1,0 +1,101 @@
+{
+  "connected": true,
+  "server_config": ".mcp.json",
+  "database": "data/campus_customs_new.db",
+  "tools_discovered": [
+    "get_customer_order_stock_and_invoice",
+    "get_rent_lease_and_due_date",
+    "get_bulk_hoodie_stock_and_price"
+  ],
+  "tests": [
+    {
+      "test_prompt": "What verified stock, price, and invoice details resolve ticket 101?",
+      "tool_name": "get_customer_order_stock_and_invoice",
+      "output": {
+        "id": 101,
+        "requester": "Tauhid Zaman",
+        "subject": "Bulldog tee",
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "qty": 1,
+        "notes": "Needs a tee in size S.",
+        "product_name": "Classic Bulldog Tee",
+        "available_qty": 0,
+        "location": "Aisle B",
+        "list_price": 28.0,
+        "invoice_id": 501,
+        "invoice_amount": 840.0,
+        "invoice_due_date": "2026-08-28",
+        "invoice_status": "open",
+        "vendor_name": "Bulldog Print Co",
+        "lead_days": 5
+      },
+      "database_verification": {
+        "status": "verified",
+        "ticket_id": 101,
+        "joins_checked": ["tickets", "inventory", "pricing", "invoices", "vendors"],
+        "key_checks": {
+          "inventory_qty_for_CC-TEE-WHITE_S": 0,
+          "pricing_list_price_for_CC-TEE-WHITE": 28.0,
+          "invoice_501_status": "open",
+          "invoice_501_vendor": "Bulldog Print Co"
+        }
+      }
+    },
+    {
+      "test_prompt": "What verified lease and due-date details resolve ticket 102?",
+      "tool_name": "get_rent_lease_and_due_date",
+      "output": {
+        "id": 102,
+        "requester": "Elm City Properties",
+        "subject": "Rent due",
+        "notes": "Email: shop rent due in 2 days.",
+        "lease_id": 1,
+        "space_name": "Chapel Street shop",
+        "landlord": "Elm City Properties",
+        "monthly_rent": 2400.0,
+        "next_due": "2026-09-02",
+        "lease_notes": null
+      },
+      "database_verification": {
+        "status": "verified",
+        "ticket_id": 102,
+        "joins_checked": ["tickets", "leases"],
+        "key_checks": {
+          "lease_id": 1,
+          "space_name": "Chapel Street shop",
+          "monthly_rent": 2400.0,
+          "next_due": "2026-09-02"
+        }
+      }
+    },
+    {
+      "test_prompt": "What verified stock and price details resolve ticket 103?",
+      "tool_name": "get_bulk_hoodie_stock_and_price",
+      "output": {
+        "id": 103,
+        "requester": "Yale AI Club",
+        "subject": "Bulk hoodie discount",
+        "sku": "CC-HOOD-NAVY",
+        "size": "M",
+        "requested_qty": 20,
+        "notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+        "product_name": "Basic Hoodie Big Yale",
+        "available_qty": 8,
+        "location": "Aisle A",
+        "list_price": 58.0
+      },
+      "database_verification": {
+        "status": "verified",
+        "ticket_id": 103,
+        "joins_checked": ["tickets", "inventory", "pricing"],
+        "key_checks": {
+          "inventory_qty_for_CC-HOOD-NAVY_M": 8,
+          "requested_qty": 20,
+          "shortage": 12,
+          "pricing_list_price_for_CC-HOOD-NAVY": 58.0
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Customs Ticket Desk</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, system-ui, sans-serif; background: #f4f6f8; color: #182235; }
+    body { margin: 0; }
+    header { background: #123b63; color: white; padding: 28px max(24px, calc((100% - 1100px) / 2)); }
+    main { max-width: 1100px; margin: 24px auto; padding: 0 24px 48px; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    button { border: 1px solid #b8c5d2; background: white; color: #123b63; padding: 11px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+    button[aria-selected="true"] { background: #123b63; color: white; border-color: #123b63; }
+    .panel { display: none; background: white; border: 1px solid #d7dfe8; border-radius: 12px; padding: 24px; box-shadow: 0 3px 12px #162b3d12; }
+    .panel.active { display: block; }
+    h1, h2, h3 { margin-top: 0; }
+    h2 { color: #123b63; }
+    h3 { margin-top: 24px; border-bottom: 1px solid #d7dfe8; padding-bottom: 7px; }
+    .facts { background: #eef5fb; border-left: 4px solid #4b83b2; padding: 14px 18px; }
+    .expected { background: #f8fafc; padding: 16px 20px; border-radius: 8px; }
+    .actual { min-height: 150px; border: 2px dashed #bdc8d3; border-radius: 8px; background: #fff; }
+    li { margin: 9px 0; line-height: 1.45; }
+    code { background: #edf0f3; padding: 2px 5px; border-radius: 4px; }
+    .empty { color: #64748b; font-style: italic; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Campus Customs Ticket Desk</h1>
+    <p>Problem 6 — Expected agent plans based only on <code>data/campus_customs_new.db</code>.</p>
+  </header>
+  <main>
+    <nav class="tabs" role="tablist" aria-label="Ticket desk tabs">
+      <button role="tab" aria-selected="true" aria-controls="ticket-101" data-tab="ticket-101">Ticket 101</button>
+      <button role="tab" aria-selected="false" aria-controls="ticket-102" data-tab="ticket-102">Ticket 102</button>
+      <button role="tab" aria-selected="false" aria-controls="ticket-103" data-tab="ticket-103">Ticket 103</button>
+      <button role="tab" aria-selected="false" aria-controls="cash" data-tab="cash">Cash</button>
+      <button role="tab" aria-selected="false" aria-controls="reflection" data-tab="reflection">Reflection</button>
+    </nav>
+
+    <section id="ticket-101" class="panel active" role="tabpanel">
+      <h2>Ticket 101 — Bulldog tee customer order</h2>
+      <div class="facts"><strong>Verified facts:</strong> Tauhid Zaman requests 1 <em>Classic Bulldog Tee</em>, SKU <code>CC-TEE-WHITE</code>, size S. Inventory is 0 in Aisle B; list price is $28.00. Invoice 501 is open for $840.00, due 2026-08-28, with Bulldog Print Co.</div>
+      <div class="expected">
+        <h3>Expected</h3>
+        <ol>
+          <li><strong>First call:</strong> Boss should call <strong>Inventory</strong> first because the immediate decision is whether the requested SKU and size can be fulfilled. Inventory must verify the size-S quantity and location through MCP.</li>
+          <li><strong>Delegation sequence:</strong> Boss → Inventory → Accounting → Customer Service → Boss. Inventory reports the zero stock and price, Accounting reviews the linked invoice/reprint implication but proposes no payment, and Customer Service prepares a customer-safe response. Boss closes with the evidence-based recommendation.</li>
+          <li><strong>MCP tools:</strong> <code>get_customer_order_stock_and_invoice</code> is the only required tool. It joins <code>tickets</code>, <code>inventory</code>, <code>pricing</code>, <code>invoices</code>, and <code>vendors</code> to verify the order, unavailable size, price, invoice, and reprint vendor. No fulfillment or payment should be promised.</li>
+        </ol>
+      </div>
+      <h3>Actual — completed</h3><div class="actual"><p><strong>Result:</strong> Resolved after real MCP/agent review. Inventory confirmed 0 size-S units; Accounting reviewed invoice 501; Customer Service prepared the safe response. No payment was executed; cash change: $0.</p></div>
+    </section>
+
+    <section id="ticket-102" class="panel" role="tabpanel">
+      <h2>Ticket 102 — Rent notice</h2>
+      <div class="facts"><strong>Verified facts:</strong> Elm City Properties reports rent due in 2 days. Lease 1 covers the Chapel Street shop, has monthly rent of $2,400.00, and next due date 2026-09-02.</div>
+      <div class="expected">
+        <h3>Expected</h3>
+        <ol>
+          <li><strong>First call:</strong> Boss should call <strong>Facilities</strong> first because this is a lease and rent-notice question. Facilities can verify the linked space, landlord, amount, and due date.</li>
+          <li><strong>Delegation sequence:</strong> Boss → Facilities → Accounting → Boss. Facilities confirms lease 1 and the urgency; Accounting checks the financial implication and prepares a payment proposal only; Boss reports the verified due date and routes any payment for human approval. Inventory and Customer Service are unnecessary for this internal rent ticket.</li>
+          <li><strong>MCP tools:</strong> <code>get_rent_lease_and_due_date</code> is the only required tool. It joins <code>tickets</code> and <code>leases</code> to verify the notice, shop, landlord, rent, and due date. No payment tool exists or should be invented.</li>
+        </ol>
+      </div>
+      <h3>Actual — completed</h3><div class="actual"><p><strong>Result:</strong> Resolved after real MCP/agent review. Facilities confirmed the lease and flagged the recorded-date conflict; Accounting found no payment confirmation. Human approval was not granted, so cash change: $0.</p></div>
+    </section>
+
+    <section id="ticket-103" class="panel" role="tabpanel">
+      <h2>Ticket 103 — Bulk hoodie discount request</h2>
+      <div class="facts"><strong>Verified facts:</strong> Yale AI Club requests 20 <em>Basic Hoodie Big Yale</em> units, SKU <code>CC-HOOD-NAVY</code>, size M. Inventory is 8 in Aisle A, so the request is short by 12 units; list price is $58.00.</div>
+      <div class="expected">
+        <h3>Expected</h3>
+        <ol>
+          <li><strong>First call:</strong> Boss should call <strong>Inventory</strong> first because stock feasibility must be established before discussing a bulk price or promise.</li>
+          <li><strong>Delegation sequence:</strong> Boss → Inventory → Accounting → Customer Service → Boss. Inventory verifies 8 available against 20 requested; Accounting evaluates the discount request as an approval-required proposal without changing price or cash; Customer Service drafts a response explaining the shortage and pending authorization; Boss gives the final safe recommendation.</li>
+          <li><strong>MCP tools:</strong> <code>get_bulk_hoodie_stock_and_price</code> is the only required tool. It joins <code>tickets</code>, <code>inventory</code>, and <code>pricing</code> to verify the requested quantity, exact size-M stock, location, and list price. Agents must not invent a discount or promise all 20 units.</li>
+        </ol>
+      </div>
+      <h3>Actual — completed</h3><div class="actual"><p><strong>Result:</strong> Resolved after real MCP/agent review. Inventory confirmed 8 available versus 20 requested; Accounting did not approve a discount; Customer Service prepared the safe response. Cash change: $0.</p></div>
+    </section>
+
+    <section id="cash" class="panel" role="tabpanel"><h2>Cash</h2><p class="empty">Empty for later comparison.</p></section>
+    <section id="reflection" class="panel" role="tabpanel">
+      <h2>Reflection</h2>
+      <div class="expected">
+        <h3>1. Ticket 101 — What did the agents identify, and what remained unresolved?</h3>
+        <p>The agents identified zero size-S inventory, a five-day supplier lead time, and the unpaid/open $840 invoice 501. They did not restock the shirt. This is supported by the Inventory, Accounting, and Boss summaries in <code>output/audit_trail.json</code> and the verified facts in <code>output/resolved_tickets.json</code>.</p>
+
+        <h3>2. Ticket 102 — Was the accounting handling appropriate?</h3>
+        <p>Yes. Accounting checks were useful, and withholding payment without explicit human approval was appropriate. The agents confirmed the lease and rent amount but flagged a stale-date conflict; no payment was executed and the checking balance stayed at $3,400. This matches the ticket-102 audit events and the final cash-account query.</p>
+
+        <h3>3. Ticket 103 — What did cross-department review add?</h3>
+        <p>Cross-department checks helped: Inventory confirmed 8 size-M hoodies against 20 requested, while Accounting confirmed that no transaction or approved discount existed. A discount would require a margin calculation and approval-authority check; neither was invented or approved. This matches the Inventory, Accounting, Customer Service, and Boss summaries.</p>
+
+        <h3>4. Expected versus actual</h3>
+        <p>Your expectation was concrete solutions. Actual behavior was mainly evidence gathering, specialist recommendations, and safe escalation. All three tickets were marked resolved in the working database, but the underlying business issues may remain: the shirt was not restocked, the rent-date discrepancy was not settled, and the hoodie shortage/discount was not resolved. “Resolved” therefore means the ticket workflow was completed, not that every business outcome was completed.</p>
+
+        <h3>5. When are multiple agents and new tools justified?</h3>
+        <p>One agent could handle simple inventory or invoice lookups. Cross-department issues benefit from multiple agents, as shown by the recorded specialist contributions for these tickets. Three solvable problems with the current tools are inventory inquiries, unpaid-invoice checks, and order inquiries. Three capabilities requiring new tools are automatic purchasing through a supplier API, customer notification through an email tool, and discount approval through a margin-calculation and approval workflow. These are forward-looking design conclusions, not capabilities claimed by the current logs.</p>
+      </div>
+    </section>
+  </main>
+  <script>
+    const buttons = document.querySelectorAll('[role="tab"]');
+    const panels = document.querySelectorAll('[role="tabpanel"]');
+    buttons.forEach(button => button.addEventListener('click', () => {
+      buttons.forEach(item => item.setAttribute('aria-selected', item === button ? 'true' : 'false'));
+      panels.forEach(panel => panel.classList.toggle('active', panel.id === button.dataset.tab));
+    }));
+  </script>
+</body>
+</html>

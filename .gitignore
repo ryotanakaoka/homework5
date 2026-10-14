@@ -1,0 +1,27 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Python local artifacts
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Frontend dependencies and generated bundles
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+
+# Local source archive; the required database files are retained in data/
+data.zip
+
+# Operating-system/editor files
+.DS_Store
+*.swp
+
+# Local logs and temporary files
+*.log
+.pytest_cache/

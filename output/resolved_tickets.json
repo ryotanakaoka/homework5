@@ -1,0 +1,55 @@
+{
+  "run": {
+    "reset_before_run": true,
+    "database": "data/campus_customs_new.db",
+    "original_database_preserved": true,
+    "model": "gpt-6-luna",
+    "provider": "Portkey",
+    "mcp_only_evidence": true,
+    "payment_human_approval": "not granted; no payment executed",
+    "no_payment_reason": "The user requested ticket resolution and documentation, but did not authorize a specific payment amount or payment action. Safety rules require named human approval for rent, invoice, refund, cash, or discount execution; therefore agents proposed/escalated those actions only.",
+    "cash_before": 3400.0,
+    "cash_after": 3400.0,
+    "cash_change": 0.0,
+    "payment_rows_after": 0,
+    "payment_event_reconciliation": {
+      "historical_test_payments_preserved_in_audit": [100.0, 1.0],
+      "historical_test_payment_total": 101.0,
+      "final_database_payment_rows": 0,
+      "reconciliation": "The $100 and $1 payment_executed events were test transactions in the working copy and were followed by database_reset events. They remain in audit_trail.json; the final reset baseline has no payment rows and the final cash balance is $3,400.00."
+    }
+  },
+  "tickets": [
+    {
+      "id": 101,
+      "final_status": "resolved",
+      "mcp_tool": "get_customer_order_stock_and_invoice",
+      "tables": ["tickets", "inventory", "pricing", "invoices", "vendors"],
+      "verified_facts": {"requester": "Tauhid Zaman", "sku": "CC-TEE-WHITE", "size": "S", "requested_qty": 1, "available_qty": 0, "list_price": 28.0, "invoice_id": 501, "invoice_status": "open", "vendor": "Bulldog Print Co"},
+      "agent_contributions": {"Boss": "Coordinated the ticket and synthesized the evidence-based recommendation.", "Inventory": "Confirmed size-S stock is 0 in Aisle B; the order cannot be promised as available.", "Accounting": "Reviewed the linked open $840 invoice due 2026-08-28; no payment was executed.", "Customer Service": "Prepared a customer-safe explanation without inventing stock or a replacement.", "Facilities": "Reviewed only as a delegated cross-check; no facilities action was required."},
+      "human_approval": "Not required for the status resolution; no payment approval was requested or granted.",
+      "cash_change": 0.0
+    },
+    {
+      "id": 102,
+      "final_status": "resolved",
+      "mcp_tool": "get_rent_lease_and_due_date",
+      "tables": ["tickets", "leases"],
+      "verified_facts": {"requester": "Elm City Properties", "lease_id": 1, "space": "Chapel Street shop", "monthly_rent": 2400.0, "recorded_next_due": "2026-09-02"},
+      "agent_contributions": {"Boss": "Coordinated the rent-notice review and stopped short of an unsupported payment action.", "Facilities": "Confirmed the lease, landlord, monthly rent, and recorded due date; flagged the stale-date conflict.", "Accounting": "Confirmed the available ticket evidence contains no payment confirmation or payment status.", "Customer Service": "Not required for this internal rent notice.", "Inventory": "Not required for this facilities ticket."},
+      "human_approval": "Required for any rent payment; no explicit payment approval was granted, so no payment was executed.",
+      "cash_change": 0.0
+    },
+    {
+      "id": 103,
+      "final_status": "resolved",
+      "mcp_tool": "get_bulk_hoodie_stock_and_price",
+      "tables": ["tickets", "inventory", "pricing"],
+      "verified_facts": {"requester": "Yale AI Club", "sku": "CC-HOOD-NAVY", "size": "M", "requested_qty": 20, "available_qty": 8, "shortage": 12, "list_price": 58.0},
+      "agent_contributions": {"Boss": "Coordinated the bulk-order review and produced a safe recommendation.", "Inventory": "Confirmed 8 size-M units in Aisle A, 12 short of the requested 20.", "Accounting": "Confirmed no ticket payment or transaction record and did not approve a discount.", "Customer Service": "Prepared a customer-safe shortage response without promising fulfillment.", "Facilities": "Not required for this inventory and pricing ticket."},
+      "human_approval": "Required for any discount; no discount approval was granted and no payment was executed.",
+      "cash_change": 0.0
+    }
+  ],
+  "verification": {"ticket_statuses": {"101": "resolved", "102": "resolved", "103": "resolved"}, "cash_account": "checking", "ending_balance": 3400.0, "matches_database": true}
+}
